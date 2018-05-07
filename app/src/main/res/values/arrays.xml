@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <array name="list_preference_entries">
+        <item>About</item>
+        <item>Animals farmed</item>
+        <item>Art and design</item>
+        <item>Australia news</item>
+        <item>Better Business</item>
+        <item>Books</item>
+        <item>Business</item>
+        <item>Business to business</item>
+        <item>Cardiff</item>
+        <item>Children</item>
+        <item>Cities</item>
+        <item>Community</item>
+        <item>Crosswords</item>
+        <item>Culture</item>
+        <item>Culture Network</item>
+        <item>Culture professionals network</item>
+        <item>Edinburgh</item>
+        <item>Education</item>
+        <item>Guardian Enterprise Network</item>
+        <item>Environment</item>
+        <item>Extra</item>
+        <item>Fashion</item>
+        <item>Film</item>
+        <item>Football</item>
+        <item>Games</item>
+        <item>Global development</item>
+        <item>Global Development Professionals Network</item>
+        <item>Guardian Government Computing</item>
+        <item>Guardian Professional</item>
+        <item>Healthcare Professionals Network</item>
+        <item>Help</item>
+        <item>Higher Education Network</item>
+        <item>Housing Network</item>
+        <item>Inequality</item>
+        <item>Info</item>
+        <item>Jobs</item>
+        <item>Katine</item>
+        <item>Law</item>
+        <item>Leeds</item>
+        <item>Life and style</item>
+        <item>Local</item>
+        <item>Local Leaders Network</item>
+        <item>Media</item>
+        <item>Media Network</item>
+        <item>Membership</item>
+        <item>Money</item>
+        <item>Music</item>
+        <item>News</item>
+        <item>Opinion</item>
+        <item>Politics</item>
+        <item>Public Leaders Network</item>
+        <item>Science</item>
+        <item>Search</item>
+        <item>Small Business Network</item>
+        <item>Social Care Network</item>
+        <item>Social Enterprise Network</item>
+        <item>Society</item>
+        <item>Society Professionals</item>
+        <item>Sport</item>
+        <item>Stage</item>
+        <item>Teacher Network</item>
+        <item>Technology</item>
+        <item>From the Guardian</item>
+        <item>From the Observer</item>
+        <item>Travel</item>
+        <item>Travel holiday offers</item>
+        <item>Television &amp; radio</item>
+        <item>UK news</item>
+        <item>US news</item>
+        <item>Voluntary Sector Network</item>
+        <item>Weather</item>
+        <item>Women in Leadership</item>
+        <item>Working in development</item>
+        <item>World news</item>
+    </array>
+    <array name="list_preference_entries_values">
+        <item>about</item>
+        <item>animals-farmed</item>
+        <item>artanddesign</item>
+        <item>australia-news</item>
+        <item>better-business</item>
+        <item>books</item>
+        <item>business</item>
+        <item>business-to-business</item>
+        <item>cardiff</item>
+        <item>childrens-books-site</item>
+        <item>cities</item>
+        <item>community</item>
+        <item>crosswords</item>
+        <item>culture</item>
+        <item>culture-network</item>
+        <item>culture-professionals-network</item>
+        <item>edinburgh</item>
+        <item>education</item>
+        <item>enterprise-network</item>
+        <item>environment</item>
+        <item>extra</item>
+        <item>fashion</item>
+        <item>film</item>
+        <item>football</item>
+        <item>games</item>
+        <item>global-development</item>
+        <item>global-development-professionals-network</item>
+        <item>government-computing-network</item>
+        <item>guardian-professional</item>
+        <item>healthcare-network</item>
+        <item>help</item>
+        <item>higher-education-network</item>
+        <item>housing-network</item>
+        <item>inequality</item>
+        <item>info</item>
+        <item>jobsadvice</item>
+        <item>katine</item>
+        <item>law</item>
+        <item>leeds</item>
+        <item>lifeandstyle</item>
+        <item>local</item>
+        <item>local-government-network</item>
+        <item>media</item>
+        <item>media-network</item>
+        <item>membership</item>
+        <item>money</item>
+        <item>music</item>
+        <item>news</item>
+        <item>commentisfree</item>
+        <item>politics</item>
+        <item>public-leaders-network</item>
+        <item>science</item>
+        <item>search</item>
+        <item>small-business-network</item>
+        <item>social-care-network</item>
+        <item>social-enterprise-network</item>
+        <item>society</item>
+        <item>society-professionals</item>
+        <item>sport</item>
+        <item>stage</item>
+        <item>teacher-network</item>
+        <item>technology</item>
+        <item>theguardian</item>
+        <item>theobserver</item>
+        <item>travel</item>
+        <item>travel/offers</item>
+        <item>tv-and-radio</item>
+        <item>uk-news</item>
+        <item>us-news</item>
+        <item>voluntary-sector-network</item>
+        <item>weather</item>
+        <item>women-in-leadership</item>
+        <item>working-in-development</item>
+        <item>world</item>
+    </array>
+
+    <array name="sort_order_entries_value">
+        <item>newest</item>
+        <item>oldest</item>
+        <item>relevance</item>
+    </array>
+    <array name="sort_order_entries">
+        <item>Newest</item>
+        <item>Oldest</item>
+        <item>Relevance</item>
+    </array>
+</resources>

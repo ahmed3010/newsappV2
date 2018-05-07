@@ -1,0 +1,28 @@
+<resources>
+    <string name="app_name">News App</string>
+    <string name="loading">loading....</string>
+    <string name="loading_error">No internet connection\nConnect to the internet then swipe down to refresh </string>
+    <string name="loading_list_items">Loading more stories …</string>
+    <string name="data_error">No stories found\nswipe down to refresh </string>
+    <string name="sections">Sections</string>
+    <string name="sections_key">mySections</string>
+    <string name="sections_summary">Select the sections you want to be displayed</string>
+    <string name="settings">Settings</string>
+    <string name="settings_title">Settings</string>
+    <string name="title_activity_settings">Settings</string>
+    <string name="news_per_page_key">News_Per_Page</string>
+    <string name="news_per_page_def">10</string>
+    <string name="news_per_page_title">Number of stories</string>
+    <string name="news_per_page_summary">Defines number of stories to be displayed for each section</string>
+    <string name="sort_order_key">sort_order</string>
+    <string name="sort_order_def">newest</string>
+    <string name="sort_order_title">Sort order</string>
+    <string name="sort_order_summary">Defines the order of the stories</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="by">by</string>
+    <string name="home">Home</string>
+    <string name="intent_error">Couldn\'t find a web browser</string>
+    <string name="edit_text_hint">value can\'t be more than 100 or ess than 1</string>
+</resources>

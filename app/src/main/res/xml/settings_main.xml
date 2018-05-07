@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <MultiSelectListPreference
+        android:defaultValue="@null"
+        android:entries="@array/list_preference_entries"
+        android:entryValues="@array/list_preference_entries_values"
+        android:key="@string/sections_key"
+        android:summary="@string/sections_summary"
+        android:title="@string/sections" />
+    <EditTextPreference
+        android:defaultValue="@string/news_per_page_def"
+        android:hint="@string/edit_text_hint"
+        android:inputType="numberDecimal"
+        android:key="@string/news_per_page_key"
+        android:max="2"
+        android:selectAllOnFocus="true"
+        android:summary="@string/news_per_page_summary"
+        android:title="@string/news_per_page_title" />
+    <ListPreference
+        android:defaultValue="@string/sort_order_def"
+        android:entries="@array/sort_order_entries"
+        android:entryValues="@array/sort_order_entries_value"
+        android:key="@string/sort_order_key"
+        android:summary="@string/sort_order_summary"
+        android:title="@string/sort_order_title" />
+</PreferenceScreen>
