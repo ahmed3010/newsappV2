@@ -16,31 +16,31 @@ class Contract {
     private static final String PAGE_PARAM = "page-size";
     private static final String SHOW_FIELDS_PARAM = "show-fields";
 
-    static URL getUrl(String section, String page, String sortOrder) {
+    static String getUrl(String section, String page, String sortOrder) {
         if (section != null) {
-            Uri uri = Uri.parse(ENDPOINT).buildUpon()
+            String url = Uri.parse(ENDPOINT).buildUpon()
                     .appendQueryParameter(SECTION_PARAM, section)
                     .appendQueryParameter(API_PARAM, API_KEY)
                     .appendQueryParameter(SHOW_TAG_PARAM, CONTRIBUTOR_TAG)
                     .appendQueryParameter(SHOW_FIELDS_PARAM, "thumbnail")
                     .appendQueryParameter(SORT_PARAM, sortOrder)
-                    .appendQueryParameter(PAGE_PARAM, page).build();
-            return createUrl(uri);
+                    .appendQueryParameter(PAGE_PARAM, page).build().toString();
+            return url;
         } else {
-            Uri uri = Uri.parse(ENDPOINT).buildUpon()
+            String url = Uri.parse(ENDPOINT).buildUpon()
                     .appendQueryParameter(API_PARAM, API_KEY)
                     .appendQueryParameter(SHOW_TAG_PARAM, CONTRIBUTOR_TAG)
                     .appendQueryParameter(SORT_PARAM, sortOrder)
                     .appendQueryParameter(SHOW_FIELDS_PARAM, "thumbnail")
-                    .appendQueryParameter(PAGE_PARAM, page).build();
-            return createUrl(uri);
+                    .appendQueryParameter(PAGE_PARAM, page).build().toString();
+            return url;
         }
     }
 
-    private static URL createUrl(Uri uri) {
+    public static URL createUrl(String uri) {
         URL url = null;
         try {
-            url = new URL(uri.toString());
+            url = new URL(uri);
         } catch (MalformedURLException e) {
             e.printStackTrace();
         }

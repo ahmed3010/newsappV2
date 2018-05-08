@@ -20,7 +20,7 @@ import java.util.List;
 
 class NewsLoader extends AsyncTaskLoader<List<News>> {
     private static final String TAG = "NewsLoader";
-    List<News> newsFeed = new ArrayList<>();
+    private List<News> newsFeed = new ArrayList<>();
     private URL url;
 
 

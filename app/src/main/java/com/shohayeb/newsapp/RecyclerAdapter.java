@@ -26,14 +26,18 @@ import java.util.List;
 public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private static final int MAIN_ITEM = 0;
     private static final int SIDE_ITEM = 1;
+    private static final int LOADING_ITEM = 2;
+    private static final int NO_DATA_FOUND = -1;
     private Context mContext;
     private List<News> newsList;
     private OnSectionClickListner onSectionClickListner;
     private Animation animation;
+    int pageSize;
 
-    public RecyclerAdapter(Context mContext, List<News> newsList) {
+    RecyclerAdapter(Context mContext, List<News> newsList, String pageSize) {
         this.mContext = mContext;
         this.newsList = newsList;
+        this.pageSize = Integer.parseInt(pageSize);
         try {
             onSectionClickListner = (OnSectionClickListner) mContext;
         } catch (ClassCastException e) {
@@ -42,13 +46,22 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         animation = AnimationUtils.loadAnimation(mContext, R.anim.zoom_in);
     }
 
+    public void setPageSize(int pageSize) {
+        this.pageSize = pageSize;
+    }
+
     @Override
     public int getItemViewType(int position) {
-        if (position == 0) {
-            return MAIN_ITEM;
-        } else {
-            return SIDE_ITEM;
-        }
+        if (!newsList.isEmpty()) {
+            if (position == 0) {
+                return MAIN_ITEM;
+            } else if (position == newsList.size()) {
+                return LOADING_ITEM;
+            } else {
+                return SIDE_ITEM;
+            }
+        } else
+            return NO_DATA_FOUND;
     }
 
     @NonNull
@@ -59,19 +72,23 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                 return new MainStoryHolder(LayoutInflater.from(mContext).inflate(R.layout.main_story_item, parent, false));
             case SIDE_ITEM:
                 return new SideStoryHolder(LayoutInflater.from(mContext).inflate(R.layout.story_item, parent, false));
+            case LOADING_ITEM:
+                return new LoadingView(LayoutInflater.from(mContext).inflate(R.layout.loading_layout, parent, false));
+            case NO_DATA_FOUND:
+                return new DummyHolder(new View(mContext));
             default:
                 throw new IllegalArgumentException("Unexpected view type " + viewType);
-
         }
     }
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
-        if (holder.getItemViewType() == MAIN_ITEM) {
+        if (holder.getItemViewType() == LOADING_ITEM) {
+            return;
+        } else if (holder.getItemViewType() == MAIN_ITEM) {
             setMainItem((MainStoryHolder) holder, newsList.get(position));
         } else if (holder.getItemViewType() == SIDE_ITEM) {
             setSideItem((SideStoryHolder) holder, newsList.get(position));
-
         }
 
     }
@@ -162,9 +179,13 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         }
     }
 
+    public void removeItemAtPosition(int position) {
+
+    }
+
     @Override
     public int getItemCount() {
-        return newsList.size();
+        return newsList.size() + 1;
     }
 
     interface OnSectionClickListner {
@@ -178,7 +199,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         private ImageView imageView;
         private View container;
 
-        public MainStoryHolder(View view) {
+        MainStoryHolder(View view) {
             super(view);
             this.title = view.findViewById(R.id.main_title);
             this.section = view.findViewById(R.id.main_section);
@@ -196,13 +217,29 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         private ImageView imageView;
         private View container;
 
-        public SideStoryHolder(View view) {
+        SideStoryHolder(View view) {
             super(view);
             this.title = view.findViewById(R.id.title_text_view);
             this.section = view.findViewById(R.id.section_text_view);
             this.date = view.findViewById(R.id.date_text_view);
             this.imageView = view.findViewById(R.id.image_view);
             this.container = view.findViewById(R.id.side_item);
+        }
+    }
+
+    class LoadingView extends RecyclerView.ViewHolder {
+        View loading;
+
+        LoadingView(View itemView) {
+            super(itemView);
+            this.loading = itemView.findViewById(R.id.loading_view);
+        }
+    }
+
+    class DummyHolder extends RecyclerView.ViewHolder {
+
+        public DummyHolder(View itemView) {
+            super(itemView);
         }
     }
 }

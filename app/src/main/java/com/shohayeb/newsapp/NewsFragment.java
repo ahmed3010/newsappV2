@@ -4,6 +4,7 @@ package com.shohayeb.newsapp;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -19,24 +20,24 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link NewsFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
+
 public class NewsFragment extends Fragment implements LoaderManager.LoaderCallbacks<List<News>> {
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+    private static final String URL_KEY = "param1";
+    private static final String ARRAY_KEY = "param2";
+    private static final String PAGE_KEY = "param2";
     private RecyclerView recyclerView;
     private View loadingView;
     private TextView errorTextView;
-    private int loaderID;
+    private int loaderID = 0;
     private SwipeRefreshLayout mySwipeRefreshLayout;
-    // TODO: Rename and change types of parameters
-    private URL url;
+    private String url;
+    private EndlessRecyclerViewScrollListener scrollListener;
+    private String page = "1";
+    private ArrayList<News> newsList = new ArrayList<>();
+    private RecyclerAdapter adapter;
 
 
     public NewsFragment() {
@@ -44,10 +45,10 @@ public class NewsFragment extends Fragment implements LoaderManager.LoaderCallba
     }
 
 
-    public static NewsFragment newInstance(URL url) {
+    public static NewsFragment newInstance(String url) {
         NewsFragment fragment = new NewsFragment();
         Bundle args = new Bundle();
-        args.putSerializable(ARG_PARAM1, url);
+        args.putString(URL_KEY, url);
         fragment.setArguments(args);
         return fragment;
     }
@@ -55,8 +56,9 @@ public class NewsFragment extends Fragment implements LoaderManager.LoaderCallba
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setRetainInstance(true);
         if (getArguments() != null) {
-            url = (URL) getArguments().getSerializable(ARG_PARAM1);
+            url = getArguments().getString(URL_KEY);
         }
     }
 
@@ -68,9 +70,37 @@ public class NewsFragment extends Fragment implements LoaderManager.LoaderCallba
         loadingView = rootView.findViewById(R.id.loading_linear_layout);
         errorTextView = rootView.findViewById(R.id.loading_error);
         mySwipeRefreshLayout = rootView.findViewById(R.id.swiperefresh);
-        getLoaderManager().initLoader(loaderID, null, this);
-        showLoading();
+        if (isConnected() && newsList.isEmpty()) {
+            getLoaderManager().initLoader(loaderID, null, this);
+            showLoading();
+        } else {
+            errorTextView.setVisibility(View.VISIBLE);
+            errorTextView.setText(R.string.loading_error);
+
+        }
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
+        recyclerView.setLayoutManager(linearLayoutManager);
+        scrollListener = new EndlessRecyclerViewScrollListener(linearLayoutManager) {
+            @Override
+            public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
+                // Triggered only when new data needs to be appended to the list
+                // Add whatever code is needed to append new items to the bottom of the list
+                loadNextDataFromApi(page);
+            }
+        };
+        recyclerView.addOnScrollListener(scrollListener);
+        adapter = new RecyclerAdapter(getContext(), newsList, getPageSize(url));
+        recyclerView.setAdapter(adapter);
         return rootView;
+    }
+
+
+    public void loadNextDataFromApi(int offset) {
+        if (isConnected() && !newsList.isEmpty()) {
+            int newPage = Integer.parseInt(page);
+            page = String.valueOf(++newPage);
+            getLoaderManager().restartLoader(loaderID, null, this);
+        }
     }
 
     private void showLoading() {
@@ -93,11 +123,17 @@ public class NewsFragment extends Fragment implements LoaderManager.LoaderCallba
 
     private void refresh() {
         if (isConnected()) {
+            newsList.clear();
+            page = "1";
             getLoaderManager().restartLoader(loaderID, null, this);
         } else {
             Toast.makeText(getContext(), "No internet connection found", Toast.LENGTH_SHORT).show();
             hideLoading();
-            errorTextView.setVisibility(View.VISIBLE);
+            if (newsList.isEmpty()) {
+                errorTextView.setVisibility(View.VISIBLE);
+            } else {
+                errorTextView.setVisibility(View.GONE);
+            }
             errorTextView.setText(R.string.loading_error);
         }
     }
@@ -123,17 +159,15 @@ public class NewsFragment extends Fragment implements LoaderManager.LoaderCallba
     @NonNull
     @Override
     public Loader<List<News>> onCreateLoader(int id, @Nullable Bundle args) {
-        return new NewsLoader(getContext(), url);
+        return new NewsLoader(getContext(), Contract.createUrl(uriParser(url, page)));
     }
 
     @Override
     public void onLoadFinished(@NonNull Loader<List<News>> loader, List<News> data) {
         hideLoading();
         if (!data.isEmpty()) {
-            RecyclerAdapter adapter = new RecyclerAdapter(getContext(), data);
-            recyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
-            recyclerView.setAdapter(adapter);
-
+            newsList.addAll(data);
+            adapter.notifyDataSetChanged();
         } else {
             errorTextView.setText(R.string.data_error);
             errorTextView.setVisibility(View.VISIBLE);
@@ -144,5 +178,26 @@ public class NewsFragment extends Fragment implements LoaderManager.LoaderCallba
     @Override
     public void onLoaderReset(@NonNull Loader<List<News>> loader) {
 
+    }
+
+    private String uriParser(String url, String page) {
+        Uri uri = Uri.parse(url);
+        return uri.buildUpon().appendQueryParameter("page", page).toString();
+    }
+
+    private String getPageSize(String url) {
+        String[] params = url.split("&");
+        for (String param : params) {
+            String name = param.split("=")[0];
+            if (name.equalsIgnoreCase("page-size"))
+                return param.split("=")[1];
+        }
+        return "";
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        getLoaderManager().destroyLoader(loaderID);
     }
 }
