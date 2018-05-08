@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <dimen name="medium">8dp</dimen>
+    <dimen name="small">2dp</dimen>
+
     <dimen name="large">16dp</dimen>
     <dimen name="text_primary">16sp</dimen>
+    <dimen name="text_secondary">14sp</dimen>
 </resources>

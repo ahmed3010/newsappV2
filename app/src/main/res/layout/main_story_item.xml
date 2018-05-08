@@ -11,22 +11,23 @@
         android:id="@+id/cardView"
         android:layout_width="match_parent"
         android:layout_height="240dp"
-        app:cardElevation="2dp">
+        app:cardElevation="@dimen/small">
 
         <ImageView
             android:id="@+id/main_image"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:scaleType="fitXY" />
+            android:scaleType="fitXY"
+            tools:ignore="ContentDescription" />
     </android.support.v7.widget.CardView>
 
     <TextView
         android:id="@+id/main_section"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:layout_marginStart="8dp"
-        android:elevation="2dp"
+        android:layout_marginBottom="@dimen/medium"
+        android:layout_marginStart="@dimen/medium"
+        android:elevation="@dimen/small"
         android:shadowColor="@android:color/black"
         android:shadowDx="1.5"
         android:shadowDy="1.3"
@@ -34,36 +35,38 @@
         android:textColor="@android:color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
+        tools:targetApi="lollipop"
         tools:text="Politics" />
 
     <TextView
         android:id="@+id/main_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:elevation="2dp"
+        android:layout_marginBottom="@dimen/medium"
+        android:layout_marginEnd="@dimen/medium"
+        android:layout_marginStart="@dimen/medium"
+        android:elevation="@dimen/small"
         android:shadowColor="@android:color/black"
         android:shadowDx="1.5"
         android:shadowDy="1.3"
         android:shadowRadius="1.6"
         android:textAlignment="textStart"
         android:textColor="@color/text_secondary"
-        android:textSize="14sp"
+        android:textSize="@dimen/text_secondary"
         app:layout_constraintBottom_toTopOf="@+id/main_section"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
+        tools:targetApi="lollipop"
         tools:text="Local elections 2018: voters being turned away in ID trial areas – live" />
 
     <TextView
         android:id="@+id/main_date"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:layout_marginEnd="8dp"
-        android:elevation="2dp"
+        android:layout_marginBottom="@dimen/medium"
+        android:layout_marginEnd="@dimen/medium"
+        android:elevation="@dimen/small"
         android:shadowColor="@android:color/black"
         android:shadowDx="1.5"
         android:shadowDy="1.3"
@@ -71,6 +74,7 @@
         android:textColor="@android:color/white"
         app:layout_constraintBottom_toBottomOf="@+id/cardView"
         app:layout_constraintEnd_toEndOf="@+id/cardView"
+        tools:targetApi="lollipop"
         tools:text='2018-05-03T12:31:41Z"' />
 
 </android.support.constraint.ConstraintLayout>
