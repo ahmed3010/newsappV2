@@ -30,24 +30,18 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     private static final int NO_DATA_FOUND = -1;
     private Context mContext;
     private List<News> newsList;
-    private OnSectionClickListner onSectionClickListner;
+    private RecyclerAdapter.onSectionClickListner sectionClickListner;
     private Animation animation;
-    int pageSize;
 
-    RecyclerAdapter(Context mContext, List<News> newsList, String pageSize) {
+    RecyclerAdapter(Context mContext, List<News> newsList) {
         this.mContext = mContext;
         this.newsList = newsList;
-        this.pageSize = Integer.parseInt(pageSize);
         try {
-            onSectionClickListner = (OnSectionClickListner) mContext;
+            sectionClickListner = (RecyclerAdapter.onSectionClickListner) mContext;
         } catch (ClassCastException e) {
             e.printStackTrace();
         }
         animation = AnimationUtils.loadAnimation(mContext, R.anim.zoom_in);
-    }
-
-    public void setPageSize(int pageSize) {
-        this.pageSize = pageSize;
     }
 
     @Override
@@ -55,10 +49,8 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         if (!newsList.isEmpty()) {
             if (position == 0) {
                 return MAIN_ITEM;
-            } else if (position == newsList.size()) {
-                return LOADING_ITEM;
             } else {
-                return SIDE_ITEM;
+                return newsList.get(position) == null ? LOADING_ITEM : SIDE_ITEM;
             }
         } else
             return NO_DATA_FOUND;
@@ -83,9 +75,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
-        if (holder.getItemViewType() == LOADING_ITEM) {
-            return;
-        } else if (holder.getItemViewType() == MAIN_ITEM) {
+        if (holder.getItemViewType() == MAIN_ITEM) {
             setMainItem((MainStoryHolder) holder, newsList.get(position));
         } else if (holder.getItemViewType() == SIDE_ITEM) {
             setSideItem((SideStoryHolder) holder, newsList.get(position));
@@ -110,12 +100,12 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         holder.section.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                onSectionClickListner.onClick(story.getSection());
+                sectionClickListner.onClick(story.getSection());
             }
         });
         String line = story.getTitle();
         if (!story.getAuthor().equals("")) {
-            line += "\n" + mContext.getResources().getString(R.string.by) + story.getAuthor();
+            line += "\n" + mContext.getResources().getString(R.string.by) + " " + story.getAuthor();
         }
         SpannableString text = new SpannableString(line);
         text.setSpan(new TextAppearanceSpan(mContext, R.style.title), 0, story.getTitle().length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
@@ -152,12 +142,12 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         holder.section.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                onSectionClickListner.onClick(story.getSection());
+                sectionClickListner.onClick(story.getSection());
             }
         });
         String line = story.getTitle();
         if (!story.getAuthor().equals("")) {
-            line += "\n" + mContext.getResources().getString(R.string.by) + story.getAuthor();
+            line += "\n" + mContext.getResources().getString(R.string.by) + " " + story.getAuthor();
         }
         SpannableString text = new SpannableString(line);
         text.setSpan(new TextAppearanceSpan(mContext, R.style.title_main), 0, story.getTitle().length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
@@ -179,16 +169,13 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         }
     }
 
-    public void removeItemAtPosition(int position) {
-
-    }
 
     @Override
     public int getItemCount() {
-        return newsList.size() + 1;
+        return newsList.size();
     }
 
-    interface OnSectionClickListner {
+    interface onSectionClickListner {
         void onClick(String title);
     }
 
@@ -238,7 +225,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
     class DummyHolder extends RecyclerView.ViewHolder {
 
-        public DummyHolder(View itemView) {
+        DummyHolder(View itemView) {
             super(itemView);
         }
     }

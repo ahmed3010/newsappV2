@@ -1,6 +1,5 @@
 package com.shohayeb.newsapp;
 
-import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.support.v4.app.Fragment;
@@ -15,11 +14,10 @@ public class SectionsAdapter extends FragmentPagerAdapter {
     private Set<String> sections;
     private String newsPerPage;
     private String sortOrder;
-    private Context mContext;
     private Map<String, String> index = new HashMap<>();
     private Resources res;
 
-    public SectionsAdapter(FragmentManager fm, Resources res, SharedPreferences preferences) {
+    SectionsAdapter(FragmentManager fm, Resources res, SharedPreferences preferences) {
         super(fm);
         this.res = res;
         sections = preferences.getStringSet(res.getString(R.string.sections_key), null);
@@ -46,6 +44,7 @@ public class SectionsAdapter extends FragmentPagerAdapter {
         return sections == null ? 1 : sections.size() + 1;
     }
 
+    @SuppressWarnings("SuspiciousMethodCalls")
     @Override
     public CharSequence getPageTitle(int position) {
         if (position == 0) {

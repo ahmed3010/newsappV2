@@ -10,7 +10,7 @@ public class News implements Serializable {
     public static final long serialVersionUID = 21042018L;
     private String title, section, date, author, webUrl, imageUrl;
 
-    public News(String title, String section, String date, String webUrl, String author, String imageUrl) {
+    News(String title, String section, String date, String webUrl, String author, String imageUrl) {
         this.title = title;
         this.section = section;
         this.date = date;

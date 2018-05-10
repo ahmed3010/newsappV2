@@ -22,28 +22,22 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 
 public class NewsFragment extends Fragment implements LoaderManager.LoaderCallbacks<List<News>> {
     private static final String URL_KEY = "param1";
-    private static final String ARRAY_KEY = "param2";
-    private static final String PAGE_KEY = "param2";
-    private RecyclerView recyclerView;
     private View loadingView;
     private TextView errorTextView;
     private int loaderID = 0;
     private SwipeRefreshLayout mySwipeRefreshLayout;
     private String url;
-    private EndlessRecyclerViewScrollListener scrollListener;
     private String page = "1";
     private ArrayList<News> newsList = new ArrayList<>();
     private RecyclerAdapter adapter;
 
-
     public NewsFragment() {
-        // Required empty public constructor
     }
-
 
     public static NewsFragment newInstance(String url) {
         NewsFragment fragment = new NewsFragment();
@@ -63,10 +57,10 @@ public class NewsFragment extends Fragment implements LoaderManager.LoaderCallba
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_news, container, false);
-        recyclerView = rootView.findViewById(R.id.recycler_view);
+        RecyclerView recyclerView = rootView.findViewById(R.id.recycler_view);
         loadingView = rootView.findViewById(R.id.loading_linear_layout);
         errorTextView = rootView.findViewById(R.id.loading_error);
         mySwipeRefreshLayout = rootView.findViewById(R.id.swiperefresh);
@@ -76,29 +70,29 @@ public class NewsFragment extends Fragment implements LoaderManager.LoaderCallba
         } else {
             errorTextView.setVisibility(View.VISIBLE);
             errorTextView.setText(R.string.loading_error);
-
         }
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
         recyclerView.setLayoutManager(linearLayoutManager);
-        scrollListener = new EndlessRecyclerViewScrollListener(linearLayoutManager) {
+        EndlessRecyclerViewScrollListener scrollListener = new EndlessRecyclerViewScrollListener(linearLayoutManager) {
             @Override
             public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
-                // Triggered only when new data needs to be appended to the list
-                // Add whatever code is needed to append new items to the bottom of the list
-                loadNextDataFromApi(page);
+                loadNextDataFromApi();
             }
         };
         recyclerView.addOnScrollListener(scrollListener);
-        adapter = new RecyclerAdapter(getContext(), newsList, getPageSize(url));
+        adapter = new RecyclerAdapter(getContext(), newsList);
         recyclerView.setAdapter(adapter);
         return rootView;
     }
 
-
-    public void loadNextDataFromApi(int offset) {
+    public void loadNextDataFromApi() {
         if (isConnected() && !newsList.isEmpty()) {
             int newPage = Integer.parseInt(page);
             page = String.valueOf(++newPage);
+            if (!newsList.contains(null)) {
+                newsList.add(null);
+                adapter.notifyItemInserted(newsList.size() - 1);
+            }
             getLoaderManager().restartLoader(loaderID, null, this);
         }
     }
@@ -127,6 +121,7 @@ public class NewsFragment extends Fragment implements LoaderManager.LoaderCallba
             page = "1";
             getLoaderManager().restartLoader(loaderID, null, this);
         } else {
+            errorTextView.setText(R.string.loading_error);
             Toast.makeText(getContext(), "No internet connection found", Toast.LENGTH_SHORT).show();
             hideLoading();
             if (newsList.isEmpty()) {
@@ -134,7 +129,6 @@ public class NewsFragment extends Fragment implements LoaderManager.LoaderCallba
             } else {
                 errorTextView.setVisibility(View.GONE);
             }
-            errorTextView.setText(R.string.loading_error);
         }
     }
 
@@ -147,7 +141,7 @@ public class NewsFragment extends Fragment implements LoaderManager.LoaderCallba
 
     private boolean isConnected() {
         ConnectivityManager cm =
-                (ConnectivityManager) getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+                (ConnectivityManager) Objects.requireNonNull(getContext()).getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetwork = null;
         if (cm != null) {
             activeNetwork = cm.getActiveNetworkInfo();
@@ -166,13 +160,19 @@ public class NewsFragment extends Fragment implements LoaderManager.LoaderCallba
     public void onLoadFinished(@NonNull Loader<List<News>> loader, List<News> data) {
         hideLoading();
         if (!data.isEmpty()) {
+            if (!newsList.isEmpty() && newsList.contains(null)) {
+                newsList.remove(newsList.size() - 1);
+                adapter.notifyItemRemoved(newsList.size() - 1);
+            }
             newsList.addAll(data);
             adapter.notifyDataSetChanged();
+            errorTextView.setVisibility(View.GONE);
         } else {
-            errorTextView.setText(R.string.data_error);
-            errorTextView.setVisibility(View.VISIBLE);
+            if (newsList.isEmpty()) {
+                errorTextView.setText(R.string.data_error);
+                errorTextView.setVisibility(View.VISIBLE);
+            }
         }
-
     }
 
     @Override
@@ -183,16 +183,6 @@ public class NewsFragment extends Fragment implements LoaderManager.LoaderCallba
     private String uriParser(String url, String page) {
         Uri uri = Uri.parse(url);
         return uri.buildUpon().appendQueryParameter("page", page).toString();
-    }
-
-    private String getPageSize(String url) {
-        String[] params = url.split("&");
-        for (String param : params) {
-            String name = param.split("=")[0];
-            if (name.equalsIgnoreCase("page-size"))
-                return param.split("=")[1];
-        }
-        return "";
     }
 
     @Override

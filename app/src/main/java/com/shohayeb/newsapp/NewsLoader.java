@@ -79,6 +79,7 @@ class NewsLoader extends AsyncTaskLoader<List<News>> {
             e.printStackTrace();
         } catch (JSONException e) {
             e.printStackTrace();
+            Log.e(TAG, "loadInBackground: " + e.getMessage());
         }
         return newsFeed;
     }

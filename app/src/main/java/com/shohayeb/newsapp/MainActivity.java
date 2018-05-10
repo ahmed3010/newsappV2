@@ -7,14 +7,14 @@ import android.preference.PreferenceManager;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class MainActivity extends AppCompatActivity implements RecyclerAdapter.OnSectionClickListner {
-    private ViewPager viewPager;
+public class MainActivity extends AppCompatActivity implements RecyclerAdapter.onSectionClickListner {
     private TabLayout tableLayout;
     private Map<String, Integer> index;
 
@@ -22,7 +22,8 @@ public class MainActivity extends AppCompatActivity implements RecyclerAdapter.O
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        viewPager = findViewById(R.id.viewpager);
+        setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
+        ViewPager viewPager = findViewById(R.id.viewpager);
         tableLayout = findViewById(R.id.tabs);
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         SectionsAdapter adapter = new SectionsAdapter(getSupportFragmentManager(), getResources(), prefs);
@@ -31,7 +32,8 @@ public class MainActivity extends AppCompatActivity implements RecyclerAdapter.O
         index = new HashMap<>();
         for (int i = 0; i < tableLayout.getTabCount(); i++) {
             TabLayout.Tab tab = tableLayout.getTabAt(i);
-            index.put(String.valueOf(tab.getText()), i);
+            if (tab != null)
+                index.put(String.valueOf(tab.getText()), i);
         }
 
     }
@@ -57,7 +59,9 @@ public class MainActivity extends AppCompatActivity implements RecyclerAdapter.O
     public void onClick(String title) {
         if (index.containsKey(title)) {
             TabLayout.Tab tab = tableLayout.getTabAt(index.get(title));
-            tab.select();
+            if (tab != null) {
+                tab.select();
+            }
         }
     }
 
@@ -65,7 +69,9 @@ public class MainActivity extends AppCompatActivity implements RecyclerAdapter.O
     public void onBackPressed() {
         if (tableLayout.getSelectedTabPosition() != 0) {
             TabLayout.Tab tab = tableLayout.getTabAt(0);
-            tab.select();
+            if (tab != null) {
+                tab.select();
+            }
         } else {
             finish();
         }

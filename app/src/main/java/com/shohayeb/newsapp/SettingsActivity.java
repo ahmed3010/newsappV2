@@ -12,6 +12,8 @@ import android.support.v4.app.NavUtils;
 import android.support.v4.app.TaskStackBuilder;
 import android.support.v7.app.AppCompatActivity;
 
+import java.util.Objects;
+
 public class SettingsActivity extends AppCompatActivity {
 
     @Override
@@ -25,7 +27,7 @@ public class SettingsActivity extends AppCompatActivity {
         super.onBackPressed();
         Intent upIntent = NavUtils.getParentActivityIntent(this);
         TaskStackBuilder.create(this)
-                .addNextIntentWithParentStack(upIntent)
+                .addNextIntentWithParentStack(Objects.requireNonNull(upIntent))
                 .startActivities();
 
 
@@ -60,6 +62,7 @@ public class SettingsActivity extends AppCompatActivity {
                     preference.setSummary(labels[prefIndex]);
                 }
             } else if (preference instanceof MultiSelectListPreference) {
+                preference.setSummary(((MultiSelectListPreference) preference).getValues().toString());
             } else {
                 preference.setSummary(stringValue);
             }

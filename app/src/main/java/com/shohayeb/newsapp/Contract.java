@@ -18,22 +18,20 @@ class Contract {
 
     static String getUrl(String section, String page, String sortOrder) {
         if (section != null) {
-            String url = Uri.parse(ENDPOINT).buildUpon()
+            return Uri.parse(ENDPOINT).buildUpon()
                     .appendQueryParameter(SECTION_PARAM, section)
                     .appendQueryParameter(API_PARAM, API_KEY)
                     .appendQueryParameter(SHOW_TAG_PARAM, CONTRIBUTOR_TAG)
                     .appendQueryParameter(SHOW_FIELDS_PARAM, "thumbnail")
                     .appendQueryParameter(SORT_PARAM, sortOrder)
                     .appendQueryParameter(PAGE_PARAM, page).build().toString();
-            return url;
         } else {
-            String url = Uri.parse(ENDPOINT).buildUpon()
+            return Uri.parse(ENDPOINT).buildUpon()
                     .appendQueryParameter(API_PARAM, API_KEY)
                     .appendQueryParameter(SHOW_TAG_PARAM, CONTRIBUTOR_TAG)
                     .appendQueryParameter(SORT_PARAM, sortOrder)
                     .appendQueryParameter(SHOW_FIELDS_PARAM, "thumbnail")
                     .appendQueryParameter(PAGE_PARAM, page).build().toString();
-            return url;
         }
     }
 
