@@ -35,6 +35,7 @@ public class NewsFragment extends Fragment implements LoaderManager.LoaderCallba
     private String page = "1";
     private ArrayList<News> newsList = new ArrayList<>();
     private RecyclerAdapter adapter;
+    private EndlessRecyclerViewScrollListener scrollListener;
 
     public NewsFragment() {
     }
@@ -73,7 +74,7 @@ public class NewsFragment extends Fragment implements LoaderManager.LoaderCallba
         }
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
         recyclerView.setLayoutManager(linearLayoutManager);
-        EndlessRecyclerViewScrollListener scrollListener = new EndlessRecyclerViewScrollListener(linearLayoutManager) {
+        scrollListener = new EndlessRecyclerViewScrollListener(linearLayoutManager) {
             @Override
             public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
                 loadNextDataFromApi();
@@ -94,6 +95,8 @@ public class NewsFragment extends Fragment implements LoaderManager.LoaderCallba
                 adapter.notifyItemInserted(newsList.size() - 1);
             }
             getLoaderManager().restartLoader(loaderID, null, this);
+        } else {
+            Toast.makeText(getContext(), R.string.loading_error, Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -119,6 +122,7 @@ public class NewsFragment extends Fragment implements LoaderManager.LoaderCallba
         if (isConnected()) {
             newsList.clear();
             page = "1";
+            scrollListener.resetState();
             getLoaderManager().restartLoader(loaderID, null, this);
         } else {
             errorTextView.setText(R.string.loading_error);
