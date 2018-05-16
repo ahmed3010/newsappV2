@@ -20,5 +20,6 @@
     <string name="by">by</string>
     <string name="home">Home</string>
     <string name="intent_error">Couldn\'t find a web browser</string>
-    <string name="edit_text_hint">value can\'t be more than 100 or ess than 1</string>
+    <string name="edit_text_hint">value can\'t be more than 100 or less than 1</string>
+    <string name="news_per_page_warning">Value can\'t be more than 100 or less than 1</string>
 </resources>

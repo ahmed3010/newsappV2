@@ -12,8 +12,6 @@ import android.text.style.TextAppearanceSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -30,18 +28,15 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     private static final int NO_DATA_FOUND = -1;
     private Context mContext;
     private List<News> newsList;
-    private RecyclerAdapter.onSectionClickListner sectionClickListner;
-    private Animation animation;
-
+    private OnSectionClickListener sectionClickListener;
     RecyclerAdapter(Context mContext, List<News> newsList) {
         this.mContext = mContext;
         this.newsList = newsList;
         try {
-            sectionClickListner = (RecyclerAdapter.onSectionClickListner) mContext;
+            sectionClickListener = (OnSectionClickListener) mContext;
         } catch (ClassCastException e) {
             e.printStackTrace();
         }
-        animation = AnimationUtils.loadAnimation(mContext, R.anim.zoom_in);
     }
 
     @Override
@@ -100,7 +95,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         holder.section.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                sectionClickListner.onClick(story.getSection());
+                sectionClickListener.onClick(story.getSection());
             }
         });
         String line = story.getTitle();
@@ -122,10 +117,11 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             holder.imageView.setImageResource(R.drawable.no_image);
         } else {
             Picasso.get().load(story.getImageUrl()).error(R.drawable.no_image).into(holder.imageView);
+
         }
     }
 
-    private void setMainItem(MainStoryHolder holder, final News story) {
+    private void setMainItem(final MainStoryHolder holder, final News story) {
         holder.container.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -142,7 +138,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         holder.section.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                sectionClickListner.onClick(story.getSection());
+                sectionClickListener.onClick(story.getSection());
             }
         });
         String line = story.getTitle();
@@ -163,9 +159,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         if (story.getImageUrl().equals("")) {
             holder.imageView.setImageResource(R.drawable.no_image);
         } else {
-            Picasso.get().load(story.getImageUrl()).error(R.drawable.no_image).into(holder.imageView);
-            animation.setRepeatCount(Animation.INFINITE);
-            holder.imageView.setAnimation(animation);
+            Picasso.get().load(story.getImageUrl()).into(holder.imageView);
         }
     }
 
@@ -175,7 +169,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         return newsList.size();
     }
 
-    interface onSectionClickListner {
+    interface OnSectionClickListener {
         void onClick(String title);
     }
 
@@ -193,7 +187,6 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             this.date = view.findViewById(R.id.main_date);
             this.imageView = view.findViewById(R.id.main_image);
             this.container = view.findViewById(R.id.main_item);
-
         }
     }
 

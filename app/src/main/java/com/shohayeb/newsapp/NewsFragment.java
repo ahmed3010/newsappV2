@@ -17,12 +17,13 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AnimationUtils;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 
 public class NewsFragment extends Fragment implements LoaderManager.LoaderCallbacks<List<News>> {
@@ -36,6 +37,7 @@ public class NewsFragment extends Fragment implements LoaderManager.LoaderCallba
     private ArrayList<News> newsList = new ArrayList<>();
     private RecyclerAdapter adapter;
     private EndlessRecyclerViewScrollListener scrollListener;
+    private RecyclerView recyclerView;
 
     public NewsFragment() {
     }
@@ -52,6 +54,7 @@ public class NewsFragment extends Fragment implements LoaderManager.LoaderCallba
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
+        adapter = new RecyclerAdapter(getContext(), newsList);
         if (getArguments() != null) {
             url = getArguments().getString(URL_KEY);
         }
@@ -61,14 +64,14 @@ public class NewsFragment extends Fragment implements LoaderManager.LoaderCallba
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_news, container, false);
-        RecyclerView recyclerView = rootView.findViewById(R.id.recycler_view);
+        recyclerView = rootView.findViewById(R.id.recycler_view);
         loadingView = rootView.findViewById(R.id.loading_linear_layout);
         errorTextView = rootView.findViewById(R.id.loading_error);
         mySwipeRefreshLayout = rootView.findViewById(R.id.swiperefresh);
         if (isConnected() && newsList.isEmpty()) {
             getLoaderManager().initLoader(loaderID, null, this);
             showLoading();
-        } else {
+        } else if (errorTextView != null) {
             errorTextView.setVisibility(View.VISIBLE);
             errorTextView.setText(R.string.loading_error);
         }
@@ -81,8 +84,8 @@ public class NewsFragment extends Fragment implements LoaderManager.LoaderCallba
             }
         };
         recyclerView.addOnScrollListener(scrollListener);
-        adapter = new RecyclerAdapter(getContext(), newsList);
         recyclerView.setAdapter(adapter);
+
         return rootView;
     }
 
@@ -97,6 +100,28 @@ public class NewsFragment extends Fragment implements LoaderManager.LoaderCallba
             getLoaderManager().restartLoader(loaderID, null, this);
         } else {
             Toast.makeText(getContext(), R.string.loading_error, Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    @Override
+    public void setMenuVisibility(boolean menuVisible) {
+        super.setMenuVisibility(menuVisible);
+        if (menuVisible) {
+            if (recyclerView != null && adapter != null) {
+                View view = recyclerView.getLayoutManager().findViewByPosition(0);
+                if (view != null) {
+                    ImageView imageView = view.findViewById(R.id.main_image);
+                    imageView.startAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.zoom_in));
+                }
+            }
+        } else {
+            if (recyclerView != null && adapter != null) {
+                View view = recyclerView.getLayoutManager().findViewByPosition(0);
+                if (view != null) {
+                    ImageView imageView = view.findViewById(R.id.main_image);
+                    imageView.setAnimation(null);
+                }
+            }
         }
     }
 
@@ -144,14 +169,17 @@ public class NewsFragment extends Fragment implements LoaderManager.LoaderCallba
     }
 
     private boolean isConnected() {
-        ConnectivityManager cm =
-                (ConnectivityManager) Objects.requireNonNull(getContext()).getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo activeNetwork = null;
-        if (cm != null) {
-            activeNetwork = cm.getActiveNetworkInfo();
+        if (getContext() != null) {
+            ConnectivityManager cm =
+                    (ConnectivityManager) getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+            NetworkInfo activeNetwork = null;
+            if (cm != null) {
+                activeNetwork = cm.getActiveNetworkInfo();
+            }
+            return activeNetwork != null &&
+                    activeNetwork.isConnectedOrConnecting();
         }
-        return activeNetwork != null &&
-                activeNetwork.isConnectedOrConnecting();
+        return false;
     }
 
     @NonNull
@@ -169,13 +197,19 @@ public class NewsFragment extends Fragment implements LoaderManager.LoaderCallba
                 adapter.notifyItemRemoved(newsList.size() - 1);
             }
             newsList.addAll(data);
-            adapter.notifyDataSetChanged();
+            adapter.notifyItemRangeInserted(newsList.size(), data.size());
             errorTextView.setVisibility(View.GONE);
+
         } else {
             if (newsList.isEmpty()) {
                 errorTextView.setText(R.string.data_error);
                 errorTextView.setVisibility(View.VISIBLE);
             }
+        }
+        View view = recyclerView.getLayoutManager().findViewByPosition(0);
+        if (view != null) {
+            ImageView imageView = view.findViewById(R.id.main_image);
+            imageView.startAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.zoom_in));
         }
     }
 
@@ -194,4 +228,5 @@ public class NewsFragment extends Fragment implements LoaderManager.LoaderCallba
         super.onSaveInstanceState(outState);
         getLoaderManager().destroyLoader(loaderID);
     }
+
 }

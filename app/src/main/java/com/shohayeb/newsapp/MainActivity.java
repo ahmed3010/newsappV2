@@ -14,7 +14,7 @@ import android.view.MenuItem;
 import java.util.HashMap;
 import java.util.Map;
 
-public class MainActivity extends AppCompatActivity implements RecyclerAdapter.onSectionClickListner {
+public class MainActivity extends AppCompatActivity implements RecyclerAdapter.OnSectionClickListener {
     private TabLayout tableLayout;
     private Map<String, Integer> index;
 
