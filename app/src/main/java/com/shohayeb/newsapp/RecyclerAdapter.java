@@ -1,5 +1,6 @@
 package com.shohayeb.newsapp;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -18,6 +19,10 @@ import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 
@@ -29,6 +34,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     private Context mContext;
     private List<News> newsList;
     private OnSectionClickListener sectionClickListener;
+
     RecyclerAdapter(Context mContext, List<News> newsList) {
         this.mContext = mContext;
         this.newsList = newsList;
@@ -105,13 +111,14 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         SpannableString text = new SpannableString(line);
         text.setSpan(new TextAppearanceSpan(mContext, R.style.title), 0, story.getTitle().length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
         holder.title.setText(text, TextView.BufferType.SPANNABLE);
-        String[] fullDateArray = story.getDate().split("T");
-        if (fullDateArray.length > 1) {
-            String date = fullDateArray[0] + "\n" + fullDateArray[1].replace("Z", "");
-            holder.date.setText(date);
-        } else {
-            holder.date.setText(story.getDate());
-        }
+//        String[] fullDateArray = story.getDate().split("T");
+//        if (fullDateArray.length > 1) {
+//            String date = fullDateArray[0] + "\n" + fullDateArray[1].replace("Z", "");
+//            holder.date.setText(date);
+//        } else {
+//            holder.date.setText(story.getDate());
+//        }
+        holder.date.setText(parseDate(story.getDate()));
         holder.section.setText(story.getSection());
         if (story.getImageUrl().equals("")) {
             holder.imageView.setImageResource(R.drawable.no_image);
@@ -148,19 +155,140 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         SpannableString text = new SpannableString(line);
         text.setSpan(new TextAppearanceSpan(mContext, R.style.title_main), 0, story.getTitle().length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
         holder.title.setText(text, TextView.BufferType.SPANNABLE);
-        String[] fullDateArray = story.getDate().split("T");
-        if (fullDateArray.length > 1) {
-            String date = fullDateArray[0] + "\n" + fullDateArray[1].replace("Z", "");
-            holder.date.setText(date);
-        } else {
-            holder.date.setText(story.getDate());
-        }
+
+        holder.date.setText(parseDate(story.getDate()));
+
         holder.section.setText(story.getSection());
         if (story.getImageUrl().equals("")) {
             holder.imageView.setImageResource(R.drawable.no_image);
         } else {
             Picasso.get().load(story.getImageUrl()).into(holder.imageView);
         }
+    }
+
+
+    private String parseDate(String date) {
+        if (date.equalsIgnoreCase("")) {
+            return "";
+        }
+        SimpleDateFormat inputDate = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+        String timeAtMilliseconds = "";
+        try {
+            Date newDate = inputDate.parse(date);
+            timeAtMilliseconds = String.valueOf(newDate.getTime());
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        String result = "now";
+//        @SuppressLint("SimpleDateFormat") SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+//        String todayDate = formatter.format(new Date());
+//        Calendar calendar = Calendar.getInstance();
+//
+        long dayAgoLong = Long.valueOf(timeAtMilliseconds);
+//        calendar.setTimeInMillis(dayAgoLong);
+//        String agoFormatter = formatter.format(calendar.getTime());
+//
+//        Date CurrentDate ;
+//        Date CreateDate ;
+        int timeZoneDifference = Calendar.getInstance().getTimeZone().getRawOffset();
+        try {
+//            CurrentDate = formatter.parse(todayDate);
+//            CreateDate = formatter.parse(agoFormatter);
+            long different = new Date().getTime() - (dayAgoLong + timeZoneDifference);
+
+
+//            long different = Math.abs(CurrentDate.getTime() - CreateDate.getTime());
+
+            long secondsInMilli = 1000;
+            long minutesInMilli = secondsInMilli * 60;
+            long hoursInMilli = minutesInMilli * 60;
+            long daysInMilli = hoursInMilli * 24;
+
+            long elapsedDays = different / daysInMilli;
+            different = different - (elapsedDays * daysInMilli);
+
+            long elapsedHours = different / hoursInMilli;
+            different = different - (elapsedHours * hoursInMilli);
+
+            long elapsedMinutes = different / minutesInMilli;
+            different = different - (elapsedHours * hoursInMilli);
+
+            long elapsedSeconds = different / secondsInMilli;
+
+            if (elapsedDays == 0) {
+                if (elapsedHours == 0) {
+                    if (elapsedMinutes == 0) {
+                        if (elapsedSeconds < 0) {
+                            return "0" + " s";
+                        } else {
+                            return "now";
+
+                        }
+                    } else {
+                        return String.valueOf(elapsedMinutes) + "m ago";
+                    }
+                } else {
+                    return String.valueOf(elapsedHours) + "h ago";
+                }
+
+            } else {
+                if (elapsedDays <= 29) {
+                    return String.valueOf(elapsedDays) + "d ago";
+                }
+                if (elapsedDays <= 58) {
+                    return "1Mth ago";
+                }
+                if (elapsedDays <= 87) {
+                    return "2Mth ago";
+                }
+                if (elapsedDays <= 116) {
+                    return "3Mth ago";
+                }
+                if (elapsedDays <= 145) {
+                    return "4Mth ago";
+                }
+                if (elapsedDays <= 174) {
+                    return "5Mth ago";
+                }
+                if (elapsedDays <= 203) {
+                    return "6Mth ago";
+                }
+                if (elapsedDays <= 232) {
+                    return "7Mth ago";
+                }
+                if (elapsedDays <= 261) {
+                    return "8Mth ago";
+                }
+                if (elapsedDays <= 290) {
+                    return "9Mth ago";
+                }
+                if (elapsedDays <= 319) {
+                    return "10Mth ago";
+                }
+                if (elapsedDays <= 348) {
+                    return "11Mth ago";
+                }
+                if (elapsedDays <= 360) {
+                    return "12Mth ago";
+                }
+
+                if (elapsedDays <= 720) {
+                    return "1 year ago";
+                }
+
+                @SuppressLint("SimpleDateFormat")
+                SimpleDateFormat formatterYear = new SimpleDateFormat("MM/dd/yyyy");
+                Calendar calendarYear = Calendar.getInstance();
+                calendarYear.setTimeInMillis(dayAgoLong);
+                return formatterYear.format(calendarYear.getTime()) + "";
+
+
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return result;
     }
 
 

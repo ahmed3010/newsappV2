@@ -1,6 +1,7 @@
 package com.shohayeb.newsapp;
 
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -17,6 +18,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -111,7 +113,7 @@ public class NewsFragment extends Fragment implements LoaderManager.LoaderCallba
                 View view = recyclerView.getLayoutManager().findViewByPosition(0);
                 if (view != null) {
                     ImageView imageView = view.findViewById(R.id.main_image);
-                    imageView.startAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.zoom_in));
+//                    imageView.startAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.zoom_in));
                 }
             }
         } else {
@@ -141,6 +143,25 @@ public class NewsFragment extends Fragment implements LoaderManager.LoaderCallba
                     }
                 }
         );
+        recyclerView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @SuppressLint("RestrictedApi")
+            @Override
+            public void onGlobalLayout() {
+                View view = recyclerView.getLayoutManager().findViewByPosition(0);
+                if (view != null) {
+                    ImageView imageView = view.findViewById(R.id.main_image);
+//                    imageView.setAnimation(null);
+                    if (isMenuVisible() && isVisible() && imageView.getTag() == null) {
+                        if (imageView.getAnimation() == null) {
+                            imageView.startAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.zoom_in));
+//                            imageView.setTag("s");
+                        } else {
+                            imageView.getAnimation().cancel();
+                        }
+                    }
+                }
+            }
+        });
     }
 
     private void refresh() {

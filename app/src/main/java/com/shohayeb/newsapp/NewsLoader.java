@@ -83,7 +83,6 @@ class NewsLoader extends AsyncTaskLoader<List<News>> {
         }
         return newsFeed;
     }
-
     @Override
     protected void onStartLoading() {
         super.onStartLoading();
